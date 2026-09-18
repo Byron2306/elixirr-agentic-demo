@@ -27,9 +27,9 @@ The interview console is a projection layer over the existing local DIO Presence
 
 Run DIO Presence separately on 127.0.0.1:8787 with a throwaway 32+ character public signing secret. Export the identical secret in the demo shell.
 
-Select the existing approved Vera Pocket profile by its exact DIO profile id:
+The canonical DIO snapshot already declares Vera Pocket as the approved default public profile. Select it explicitly for the demo:
 
-    export DIO_VESPER_VOICE_PROFILE='<existing-pocket-profile-id>'
+    export DIO_VESPER_VOICE_PROFILE='vera_pocket_public'
 
 If Pocket TTS is not on its default 127.0.0.1:8000 endpoint, set:
 
