@@ -9,10 +9,15 @@ from adapters.dio import DIOAdapter
 DASH=ROOT/"dashboard"; SCENARIO=ROOT/"scenarios"/"01_vesper_customer.json"
 class Handler(SimpleHTTPRequestHandler):
     def translate_path(self,path):
+        # Serve the UI from DASH regardless of the process working directory.
+        # /static/app.css and /static/app.js map directly to dashboard/app.*
         rel=urlparse(path).path
-        if rel=="/": rel="/index.html"
-        if rel.startswith("/static/"): rel=rel[len("/static"):]
-        else: rel=rel.lstrip("/")
+        if rel in {"", "/"}:
+            return str(DASH/"index.html")
+        if rel.startswith("/static/"):
+            rel=rel[len("/static/"):]
+        else:
+            rel=rel.lstrip("/")
         return str(DASH/rel)
     def end_headers(self):
         # Interview console assets must never be served from browser cache while iterating.
