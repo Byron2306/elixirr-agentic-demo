@@ -1,0 +1,9 @@
+{
+  "schema": "dio.presence_ingress.v1",
+  "channel": "webchat",
+  "external_user_id": "elixirr-demo-customer",
+  "display_name": "Interview Demo Customer",
+  "source_message_id": "elixirr-demo-001",
+  "message_type": "text",
+  "text": "I run a training organisation and have 80 assessments to review. I need consistent marking, an audit trail, and human approval before marks are released. Can you help me choose the right workflow?"
+}
