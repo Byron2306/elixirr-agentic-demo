@@ -82,7 +82,10 @@ class DIOAdapter:
 
         decision = data.get("decision") or {}
         needs = data.get("needs_you") or data.get("needs_you_id")
-        status = "needs_you" if needs else "pass"
+        intake = data.get("intake") or {}
+        operator_review = bool((intake.get("authority") or {}).get("operator_review_required"))
+        pending_review = intake.get("state") == "pending_operator_review"
+        status = "needs_you" if (needs or operator_review or pending_review) else "pass"
         return DemoEnvelope(
             act="vesper", mode="live", status=status, trace_id=trace,
             authority="source_system_only",
@@ -92,6 +95,8 @@ class DIOAdapter:
             details={
                 "intent":decision.get("intent"), "product":decision.get("product"),
                 "confidence":decision.get("confidence"), "needs_you":needs,
+                "operator_review_required":operator_review,
+                "workflow_state":intake.get("state"),
                 "external_authority_created":False,
             }
         )
