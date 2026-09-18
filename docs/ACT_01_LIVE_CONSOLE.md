@@ -4,14 +4,14 @@ The interview console is a projection layer over the existing local DIO Presence
 
 ## Sequence
 
-1. Browser checks DIO Presence health.
+1. Browser checks DIO Presence health and independently probes the local Pocket TTS service.
 2. Human speaks or types a business request.
 3. Browser sends text to the local demo server.
 4. Demo server constructs a signed public webchat envelope.
 5. DIO Presence performs its real classification, routing, intake, LINGUA and authority work.
 6. The browser renders the returned decision and authority receipt.
-7. Only the exact returned Vesper reply text is offered to the configured Pocket TTS voice.
-8. Audio is played locally. Voice rendering does not create send or execution authority.
+7. Only the exact returned Vesper reply text is POSTed as multipart form field `text` to Pocket TTS `/tts`.
+8. Pocket renders with its server-side default voice, Vera, and audio is played locally. Voice rendering does not create send or execution authority.
 
 ## Safety
 
@@ -21,17 +21,22 @@ The interview console is a projection layer over the existing local DIO Presence
 - No attachment parsing is added.
 - SAFE STOP prevents further UI submissions.
 - Speech recognition is browser-dependent and is an input convenience only.
-- If Vera Pocket is not configured or Pocket TTS is unavailable, text remains canonical and the UI reports voice unavailable.
+- Pocket health is live runtime reachability, not configuration presence.
+- If Pocket TTS is unavailable, text remains canonical and the UI reports voice unavailable.
 
 ## Termux
 
 Run DIO Presence separately on 127.0.0.1:8787 with a throwaway 32+ character public signing secret. Export the identical secret in the demo shell.
 
-The canonical DIO snapshot already declares Vera Pocket as the approved default public profile. Select it explicitly for the demo:
+Run Pocket TTS separately with Vera as its default voice:
 
-    export DIO_VESPER_VOICE_PROFILE='vera_pocket_public'
+    "$HOME/pocket-tts-local/venv/bin/pocket-tts" serve \
+      --host 127.0.0.1 \
+      --port 8000 \
+      --language english \
+      --default-voice vera
 
-If Pocket TTS is not on its default 127.0.0.1:8000 endpoint, set:
+The demo defaults to `http://127.0.0.1:8000`. To use another local Pocket endpoint:
 
     export DIO_VESPER_POCKET_TTS_URL='http://127.0.0.1:<port>'
 
@@ -41,4 +46,4 @@ Then:
 
 Open http://127.0.0.1:8765 in the phone browser.
 
-Do not invent a profile id. Inspect DIO config/vesper_voice_profiles.json and use the existing Pocket TTS entry.
+The DIO canonical voice profile remains the governance declaration for Vesper's public voice. The interview console talks directly to the local Pocket renderer so the runtime boundary is explicit and independently health-checked.
