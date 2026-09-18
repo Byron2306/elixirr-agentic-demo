@@ -14,6 +14,12 @@ class Handler(SimpleHTTPRequestHandler):
         if rel.startswith("/static/"): rel=rel[len("/static"):]
         else: rel=rel.lstrip("/")
         return str(DASH/rel)
+    def end_headers(self):
+        # Interview console assets must never be served from browser cache while iterating.
+        self.send_header("Cache-Control","no-store, no-cache, must-revalidate, max-age=0")
+        self.send_header("Pragma","no-cache")
+        self.send_header("Expires","0")
+        super().end_headers()
     def _json(self,status,payload):
         raw=json.dumps(payload).encode();self.send_response(status);self.send_header("Content-Type","application/json");self.send_header("Content-Length",str(len(raw)));self.end_headers();self.wfile.write(raw)
     def do_GET(self):
